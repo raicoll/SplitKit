@@ -110,16 +110,16 @@ open class SplitViewController: UIViewController {
     @objc public var firstChild : UIViewController? {
         didSet {
             if let oldController = oldValue {
-                oldController.willMove(toParentViewController: nil)
+                oldController.willMove(toParent: nil)
                 oldController.view.removeFromSuperview()
-                oldController.removeFromParentViewController()
+                oldController.removeFromParent()
             }
             if let child = firstChild {
-                addChildViewController(child)
+                addChild(child)
                 child.view.frame = firstContainerView.bounds
                 child.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                 firstContainerView.addSubview(child.view)
-                child.didMove(toParentViewController: self)
+                child.didMove(toParent: self)
             }
             view.layoutIfNeeded()
         }
@@ -129,16 +129,16 @@ open class SplitViewController: UIViewController {
     @objc public var secondChild : UIViewController? {
         didSet {
             if let oldController = oldValue {
-                oldController.willMove(toParentViewController: nil)
+                oldController.willMove(toParent: nil)
                 oldController.view.removeFromSuperview()
-                oldController.removeFromParentViewController()
+                oldController.removeFromParent()
             }
             if let child = secondChild {
-                addChildViewController(child)
+                addChild(child)
                 child.view.frame = secondContainerView.bounds
                 child.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                 secondContainerView.addSubview(child.view)
-                child.didMove(toParentViewController: self)
+                child.didMove(toParent: self)
             }
             view.layoutIfNeeded()
         }
@@ -334,10 +334,10 @@ open class SplitViewController: UIViewController {
         }
 
         // We do some magic to detect bottom safe area to react the the keyboard size change (appearance, disappearance, ecc)
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIKeyboardWillChangeFrame, object: nil, queue: OperationQueue.main) { [unowned self] (notification) -> Void in
-            let initialRect = ((notification as NSNotification).userInfo![UIKeyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue
+        NotificationCenter.default.addObserver(forName: UIResponder.keyboardWillChangeFrameNotification, object: nil, queue: OperationQueue.main) { [unowned self] (notification) -> Void in
+            let initialRect = ((notification as NSNotification).userInfo![UIResponder.keyboardFrameBeginUserInfoKey] as AnyObject).cgRectValue
             let _ = self.view.frame.size.height - self.view.convert(initialRect!, from: nil).origin.y
-            let keyboardRect = ((notification as NSNotification).userInfo![UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+            let keyboardRect = ((notification as NSNotification).userInfo![UIResponder.keyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
             let newHeight = self.view.frame.size.height - self.view.convert(keyboardRect!, from: nil).origin.y
             
             self.bottomKeyboardHeight = newHeight
